@@ -289,8 +289,7 @@ internal class StatSvc {
         }
 
         override suspend fun QQAndroidBot.handle(packet: MsfOfflinePacket, sequenceId: Int): OutgoingPacket? {
-            val cause = packet.token.cause
-            check(cause is MsfOfflineToken) { "internal error: handling $packet in StatSvc.ReqMSFOffline" }
+            val cause = packet.token
             val resp = buildResponseUniPacket(client) {
                 writeJceStruct(
                     RequestPacket.serializer(),
