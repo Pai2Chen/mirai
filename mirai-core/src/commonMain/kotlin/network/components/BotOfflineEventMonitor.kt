@@ -9,6 +9,7 @@
 
 package net.mamoe.mirai.internal.network.components
 
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
@@ -46,7 +47,9 @@ internal data class BotClosedByEvent(
 ) : NetworkException(false)
 
 internal class BotOfflineEventMonitorImpl : BotOfflineEventMonitor {
+    private val attached = atomic(false)
     override fun attachJob(bot: AbstractBot, scope: CoroutineScope) {
+        if (!attached.compareAndSet(false, true)) return
         bot.eventChannel.parentScope(scope).subscribeAlways(
             ::onEvent,
             priority = EventPriority.MONITOR,
